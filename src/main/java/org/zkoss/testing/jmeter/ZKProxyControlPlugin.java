@@ -1,17 +1,12 @@
 package org.zkoss.testing.jmeter;
 
-import java.awt.Component;
-import java.awt.Container;
-
 import javax.swing.Box;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
-import javax.swing.tree.TreePath;
 
 import org.apache.jmeter.config.Argument;
 import org.apache.jmeter.config.Arguments;
@@ -19,8 +14,6 @@ import org.apache.jmeter.exceptions.IllegalUserActionException;
 import org.apache.jmeter.extractor.RegexExtractor;
 import org.apache.jmeter.extractor.gui.RegexExtractorGui;
 import org.apache.jmeter.gui.GuiPackage;
-import org.apache.jmeter.gui.JMeterGUIComponent;
-import org.apache.jmeter.gui.ReportGuiPackage;
 import org.apache.jmeter.gui.tree.JMeterTreeModel;
 import org.apache.jmeter.gui.tree.JMeterTreeNode;
 import org.apache.jmeter.gui.util.PowerTableModel;
@@ -29,37 +22,21 @@ import org.apache.jmeter.protocol.http.proxy.gui.ProxyControlGui;
 import org.apache.jmeter.protocol.http.sampler.HTTPSamplerBase;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.TestElement;
-import org.apache.jmeter.util.JMeterUtils;
 
 public class ZKProxyControlPlugin extends ProxyControlGui {
 
+	private static final long serialVersionUID = -7607963125510262131L;
 	private JTextField auPathField;
-
-
-	
-
 
 	public String getStaticLabel() {
 		return "ZK HTTP Proxy Server";
 	}
-
-	
-	private void printComps(Container c, int l) {
-		for (Component c2 : c.getComponents()) {
-			
-			for (int i = 0; i < l; i++) {
-				System.out.print("\t");
-			}
-			System.out.println(c2.getClass());
-			
-			if (c2 instanceof Container)
-				printComps((Container) c2, l + 1);
-		}
-		
-	}
 	
 	public ZKProxyControlPlugin() {
-		super();
+		init();
+	}
+	
+	private void init() {
 
 		JPanel panel = (JPanel) getComponent(2);
 
@@ -122,12 +99,20 @@ public class ZKProxyControlPlugin extends ProxyControlGui {
 					} catch (IllegalUserActionException e) {
 						e.printStackTrace();
 					}
-				} else if (!auPath.isEmpty() && sampler.getPath().endsWith(auPath)) {
-					Arguments args = sampler.getArguments();
-					Argument arg = args.getArgument(0);
-					if ("dtid".equals(arg.getName())) {
-						arg.setValue("${dtid}");
+				} else if (!auPath.isEmpty()) {
+					String path = sampler.getPath();
+					int i = path.indexOf("jsessionid");
+					if (i > -1)
+						path = path.substring(0, i - 1);
+					
+					if (path.endsWith(auPath)) {
+						Arguments args = sampler.getArguments();
+						Argument arg = args.getArgument(0);
+						if ("dtid".equals(arg.getName())) {
+							arg.setValue("${dtid}");
+						}
 					}
+					
 				}
 			}
 		};
