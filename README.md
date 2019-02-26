@@ -1,7 +1,7 @@
 # ZK - JMeter Plugin
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Installataion
+## Installation
 
 Copy the jar file `zk-jmeter-plugin-x.x.x.jar` into your `apache-jmeter-x.x/lib/ext` folder and restart Jmeter
 
